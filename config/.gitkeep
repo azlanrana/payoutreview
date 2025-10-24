@@ -1,0 +1,3 @@
+# Keep this directory in git
+# Place service_account.json here (will be ignored by .gitignore)
+

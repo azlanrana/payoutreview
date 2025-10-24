@@ -1,0 +1,29 @@
+# Trading Payout Compliance System - Dependencies
+
+# Google Sheets Integration
+gspread>=5.12.0
+gspread-dataframe>=3.3.1
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Date/Time Handling
+python-dateutil>=2.8.2
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+
+# Type Hints
+typing-extensions>=4.8.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# Cloud Functions (for deployment)
+functions-framework>=3.4.0
+
