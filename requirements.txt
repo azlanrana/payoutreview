@@ -24,6 +24,9 @@ typing-extensions>=4.8.0
 # Environment Variables
 python-dotenv>=1.0.0
 
+# Web Frontend
+streamlit>=1.28.0
+
 # Cloud Functions (for deployment)
 functions-framework>=3.4.0
 

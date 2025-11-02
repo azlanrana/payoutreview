@@ -18,7 +18,29 @@ python main.py --csv sample_trades.csv
 python main.py --csv your_trades.csv --output-csv results.csv
 ```
 
-### Option 2: Google Sheets (COLLABORATIVE - 5 Minutes)
+### Option 2: Web Frontend (SIMPLEST - 2 Minutes)
+```bash
+# Install and run the web interface
+pip install -r requirements.txt
+python frontend/run_frontend.py
+
+# Open browser to http://localhost:8501
+# Upload CSV → Get instant results!
+```
+
+### Option 3: Online Web App (PUBLIC ACCESS - 10 Minutes)
+```bash
+# Deploy to Streamlit Cloud (FREE!)
+1. Push code to GitHub
+2. Go to share.streamlit.io
+3. Connect repo → Deploy
+4. Get public URL instantly!
+
+# Your customers can now access:
+# https://your-app-name.streamlit.app
+```
+
+### Option 4: Google Sheets (COLLABORATIVE - 5 Minutes)
 ```bash
 # Set up Google credentials (see Google Sheets Setup below)
 # Then run:
@@ -47,8 +69,12 @@ python main.py --sheet-url "YOUR_GOOGLE_SHEET_URL"
 ```
 payoutcalculations/
 ├── 📄 UNIFIED_GUIDE.md              # This file - everything you need!
-├── 🐍 main.py                       # Main entry point
+├── 🐍 main.py                       # Main entry point (CLI)
+├── 🌐 streamlit_app.py              # Public web app entry point
+├── 🖥️ frontend/                     # Local web interface
 ├── 📄 requirements.txt              # Python dependencies
+├── 📄 DEPLOYMENT.md                 # Online deployment guide
+├── 📁 .streamlit/                   # Streamlit configuration
 ├── 📁 src/                          # Source code
 │   ├── models/                      # Data models
 │   ├── data_access/                 # CSV & Google Sheets integration
@@ -309,6 +335,13 @@ python main.py --csv /full/path/to/trades.csv
 
 ## 🎯 When to Use Each Method
 
+### Use Web Frontend When:
+- ✅ **Simplest option** - Just upload and download!
+- ✅ Need instant visual feedback
+- ✅ Non-technical users
+- ✅ Quick validation without setup
+- ✅ Working offline (local server)
+
 ### Use CSV When:
 - ✅ Testing locally
 - ✅ Quick one-off validations
@@ -331,7 +364,18 @@ python main.py --csv /full/path/to/trades.csv
 
 ### Essential Commands
 ```bash
-# Test with sample data
+# 🌐 ONLINE WEB APP (Public Access!)
+# 1. Push to GitHub
+# 2. Deploy: share.streamlit.io
+# Result: https://your-app.streamlit.app
+
+# 🖥️ LOCAL WEB FRONTEND
+python frontend/run_frontend.py  # Then upload CSV in browser
+
+# 🖥️ PUBLIC WEB APP (Local test)
+streamlit run streamlit_app.py   # Test before deploying
+
+# Test with sample data (CLI)
 python main.py --csv sample_trades.csv
 
 # Your own data
@@ -339,10 +383,6 @@ python main.py --csv trades.csv --output-csv results.csv
 
 # Google Sheets
 python main.py --sheet-url "YOUR_SHEET_URL"
-
-# With colors
-python main.py --csv trades.csv --colored-trades highlighted.csv
-python main.py --sheet-url "..." --colored-sheets
 ```
 
 ### File Formats
