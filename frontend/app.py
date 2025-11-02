@@ -2,7 +2,7 @@
 
 import streamlit as st
 import pandas as pd
-from validation_wrapper import validate_trades_csv, get_csv_download_content, get_validation_summary
+from .validation_wrapper import validate_trades_csv, get_csv_download_content, get_validation_summary
 
 
 def main():
