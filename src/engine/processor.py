@@ -1,8 +1,9 @@
 """Main validation processor - orchestrates the entire validation flow"""
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from datetime import datetime
 from decimal import Decimal
+import pandas as pd
 
 from ..models import Trade, Config
 from ..rules import BlueRule, RedRule, OrangeRule, YellowRule, RuleResult
@@ -38,12 +39,13 @@ class ValidationProcessor:
             'yellow': YellowRule(config)
         }
     
-    def process(self, trades: List[Trade]) -> Dict[str, Any]:
+    def process(self, trades: List[Trade], trades_df: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
         """
         Process trades and return validation results
 
         Args:
             trades: List of Trade objects to validate
+            trades_df: Optional DataFrame with trade data (used to calculate gross profit including swaps/commissions)
 
         Returns:
             Complete validation result dictionary
@@ -54,7 +56,18 @@ class ValidationProcessor:
         account_type = trades[0].account_type if trades else "unknown"
 
         # Calculate profit amounts
+        # Start with net profit from trades
         raw_total_profit = sum(trade.profit for trade in trades)
+        
+        # If DataFrame is provided, calculate gross profit (including swaps/commissions)
+        if trades_df is not None:
+            commission_total = trades_df.get('commission', pd.Series([0] * len(trades_df))).sum()
+            swap_total = trades_df.get('swap', pd.Series([0] * len(trades_df))).sum()
+            # Gross profit = net profit + commissions + swaps
+            # Commissions and swaps are typically stored as negative values (costs),
+            # so we use abs() to add them back to get gross profit
+            raw_total_profit = raw_total_profit + abs(commission_total) + abs(swap_total)
+        
         payout_cap_amount = self.config.payout_cap_amount
         capped_total_profit = min(raw_total_profit, payout_cap_amount)
 
@@ -67,6 +80,38 @@ class ValidationProcessor:
         # Get summary
         summary = DecisionEngine.get_summary(rule_results)
 
+        # Calculate consistency rule metrics for export
+        consistency_metrics = {}
+        
+        # Blue Rule: Lot size consistency range
+        blue_result = rule_results.get('blue')
+        if blue_result and blue_result.violations:
+            # Extract range from first violation (all violations have same range)
+            first_violation = blue_result.violations[0]
+            if 'bottom_range' in first_violation and 'top_range' in first_violation:
+                consistency_metrics['lot_size_range'] = {
+                    'bottom': float(first_violation['bottom_range']),
+                    'top': float(first_violation['top_range']),
+                    'average': float(first_violation.get('average_lot_size', 0))
+                }
+        else:
+            # Calculate range even if no violations (for display purposes)
+            if trades:
+                total_lots = sum(float(trade.lot_size) for trade in trades)
+                total_trades = len(trades)
+                average_lot_size = total_lots / total_trades if total_trades > 0 else 0
+                consistency_metrics['lot_size_range'] = {
+                    'bottom': float(average_lot_size * 0.25),
+                    'top': float(average_lot_size * 2.00),
+                    'average': float(average_lot_size)
+                }
+        
+        # Red Rule: Profit consistency threshold
+        consistency_metrics['profit_threshold'] = {
+            'threshold_percentage': float(self.config.red_profit_threshold * 100),
+            'threshold_amount': float(capped_total_profit * self.config.red_profit_threshold)
+        }
+        
         # Build complete result
         result = {
             'trader_id': trader_id,
@@ -86,6 +131,7 @@ class ValidationProcessor:
                 key: result.to_dict()
                 for key, result in rule_results.items()
             },
+            'consistency_metrics': consistency_metrics,
             'summary': {
                 'total_trades': len(trades),
                 'total_profit': float(capped_total_profit),  # Use capped profit for display

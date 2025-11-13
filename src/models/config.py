@@ -25,7 +25,9 @@ class Config:
     orange_breach_threshold: int = 5  # 5+ simultaneous = BREACH
 
     # Yellow Rule - Martingale
-    yellow_lot_multiplier: Decimal = field(default_factory=lambda: Decimal("1.5"))  # 1.5x increase
+    # Note: yellow_lot_multiplier is kept for backward compatibility but not used.
+    # The rule flags ANY lot size increase on overlapping trades, not a specific multiplier.
+    yellow_lot_multiplier: Decimal = field(default_factory=lambda: Decimal("1.5"))  # Not used - kept for compatibility
     
     def __post_init__(self):
         """Validate configuration values"""

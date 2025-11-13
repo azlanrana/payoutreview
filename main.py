@@ -98,7 +98,7 @@ Examples:
         if args.verbose:
             print("Running validation...")
 
-        results = processor.process(trades)
+        results = processor.process(trades, trades_df)
 
         # Generate output filename
         import os

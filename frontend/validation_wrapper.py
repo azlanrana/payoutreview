@@ -52,8 +52,8 @@ def validate_trades_csv(uploaded_file, account_size: float = 100000.0) -> Tuple[
             # Initialize validation processor
             processor = ValidationProcessor(config)
 
-            # Run validation
-            results = processor.process(trades)
+            # Run validation (pass trades_df to include swaps/commissions in capped payout)
+            results = processor.process(trades, trades_df)
 
             # Create processed DataFrame with color coding
             processed_df = _add_violation_columns(trades_df, results)

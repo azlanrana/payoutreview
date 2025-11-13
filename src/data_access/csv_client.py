@@ -323,6 +323,36 @@ class CSVClient:
             else:
                 summary_rows.append([f"{rule_name}:", f"PASS", '', '', '', '', '', '', '', '', '', '', '', '', ''])
         
+        # Add consistency rule metrics
+        consistency_metrics = results.get('consistency_metrics', {})
+        summary_rows.extend([
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['=== CONSISTENCY RULE METRICS ===', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ])
+        
+        # Lot size consistency range
+        lot_size_range = consistency_metrics.get('lot_size_range', {})
+        if lot_size_range:
+            bottom = lot_size_range.get('bottom', 0)
+            top = lot_size_range.get('top', 0)
+            average = lot_size_range.get('average', 0)
+            summary_rows.append([
+                'Lot Size Consistency Range:', 
+                f"{bottom:.4f} - {top:.4f} (Average: {average:.4f})", 
+                '', '', '', '', '', '', '', '', '', '', '', '', ''
+            ])
+        
+        # Profit consistency threshold
+        profit_threshold = consistency_metrics.get('profit_threshold', {})
+        if profit_threshold:
+            threshold_pct = profit_threshold.get('threshold_percentage', 0)
+            threshold_amount = profit_threshold.get('threshold_amount', 0)
+            summary_rows.append([
+                'Profit Consistency Threshold:', 
+                f"{threshold_pct:.1f}% (${threshold_amount:,.2f})", 
+                '', '', '', '', '', '', '', '', '', '', '', '', ''
+            ])
+        
         summary_rows.extend([
             ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
             ['=== TRADE DETAILS ===', '', '', '', '', '', '', '', '', '', '', '', '', '', '']

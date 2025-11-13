@@ -68,7 +68,7 @@ def main():
             "🟦 **Blue Rule**": "Lot Consistency - Trades within 3 minutes should have similar lot sizes",
             "🟥 **Red Rule**": "Profit Consistency - No single day's profit > 40% of total capped profit",
             "🟧 **Orange Rule**": "Grid Trading - Max 3 simultaneous trades on same pair",
-            "🟨 **Yellow Rule**": "Martingale - No lot size increases > 1.5x on overlapping trades"
+            "🟨 **Yellow Rule**": "Martingale - Any lot size increase on overlapping trades (same pair and direction)"
         }
 
         for rule_name, description in rules.items():
